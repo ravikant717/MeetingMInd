@@ -8,6 +8,7 @@ import AudioHeader from "@/components/AudioHeader";
 import AudioPlayer from "@/components/AudioPlayer";
 import SummaryCard from "@/components/SummaryCard";
 import TranscriptCard from "@/components/TranscriptCard";
+import ActionItemsCard from "@/components/ActionItemsCard";
 
 export default function AudioPage() {
   const params = useParams();
@@ -39,7 +40,7 @@ export default function AudioPage() {
         <AudioPlayer src={audio.audioUrl} />
 
         <SummaryCard summary={audio.summary} />
-
+        <ActionItemsCard actionItems={audio.actionItems || []} />
         <TranscriptCard transcript={audio.transcript} />
       </main>
     </div>

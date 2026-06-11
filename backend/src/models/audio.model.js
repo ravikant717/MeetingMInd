@@ -35,6 +35,13 @@ const audioSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    actionItems: [
+      {
+        task: String,
+        owner: String,
+        deadline: String,
+      },
+    ],
     status: {
       type: String,
       enum: ["uploaded", "processing", "completed"],
