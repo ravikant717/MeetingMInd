@@ -1,4 +1,5 @@
 const Audio = require("../models/audio.model");
+const getActionItems = require("../services/action.service");
 const uploadFile = require("../services/storage.service");
 const generateSummary = require("../services/summary.service");
 const transcribeAudio = require("../services/transcription.service");
@@ -28,6 +29,9 @@ async function uploadUserFile(req, res) {
 
     const summaryResponse = await generateSummary(transcript);
     const summary = summaryResponse.summary;
+
+    const actionResponse = await getActionItems(transcript);
+    const actionItems = actionResponse.actionItems;
     // Save file to database
     const audioTrack = await Audio.create({
       title: req.body.title || req.file.originalname.replace(/\.[^/.]+$/, ""),
@@ -37,6 +41,7 @@ async function uploadUserFile(req, res) {
       duration: req.body.duration || 0,
       transcript,
       summary,
+      actionItems,
     });
 
     return res.status(201).json({
@@ -71,8 +76,8 @@ async function getAudioByID(req, res) {
         message: "Audio not found",
       });
     }
-    const { title, transcript, audioUrl, summary, createdAt } = audioFile;
-
+    const { title, transcript, audioUrl, summary, createdAt, actionItems } =
+      audioFile;
     return res.status(200).json({
       message: "Audio fetched successfully",
       audio: {
@@ -81,6 +86,7 @@ async function getAudioByID(req, res) {
         summary,
         audioUrl,
         createdAt,
+        actionItems,
       },
     });
   } catch (err) {
