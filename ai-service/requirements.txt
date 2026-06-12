@@ -4,3 +4,5 @@ python-multipart
 openai-whisper
 google-generativeai
 dotenv
+qdrant-client
+sentence-transformers

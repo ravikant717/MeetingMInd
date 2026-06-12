@@ -3,6 +3,7 @@ const getActionItems = require("../services/action.service");
 const uploadFile = require("../services/storage.service");
 const generateSummary = require("../services/summary.service");
 const transcribeAudio = require("../services/transcription.service");
+const storeVectors = require("../services/vector.service");
 /**
  * @name uploadUserFile
  * @description uploads file to imagekit, save file info to mongodb
@@ -37,16 +38,16 @@ async function uploadUserFile(req, res) {
       title: req.body.title || req.file.originalname.replace(/\.[^/.]+$/, ""),
       uploadedBy: req.user.id,
       audioUrl: uploaded.url,
-      audioFileId: fileId, // Now correctly defined!
+      audioFileId: fileId,
       duration: req.body.duration || 0,
       transcript,
       summary,
       actionItems,
     });
 
+    await storeVectors(audioTrack.audioFileId, transcript);
     return res.status(201).json({
       message: "Audio track uploaded and documented successfully",
-      // FIX 2: Removed 'fileLog' since it doesn't exist in this scope
       audio: audioTrack,
     });
   } catch (err) {
@@ -76,8 +77,10 @@ async function getAudioByID(req, res) {
         message: "Audio not found",
       });
     }
+
     const { title, transcript, audioUrl, summary, createdAt, actionItems } =
       audioFile;
+
     return res.status(200).json({
       message: "Audio fetched successfully",
       audio: {
