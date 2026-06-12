@@ -1,6 +1,11 @@
 from fastapi import FastAPI, UploadFile, File
 from dotenv import load_dotenv
 from pydantic import BaseModel
+from qdrant_client.models import Distance
+from qdrant_client.models import VectorParams
+from qdrant_config import qdrant
+from chunker import chunk_text
+from vector_store import store_chunks
 import whisper
 import os
 import shutil
@@ -16,7 +21,9 @@ app = FastAPI()
 class SummaryRequest(BaseModel): 
     transcript: str
 
-
+class VectorRequest(BaseModel): 
+    audioId: str
+    transcript: str
 
 print("===================================")
 print("FFMPEG:", shutil.which("ffmpeg"))
@@ -143,4 +150,38 @@ async def getActionItems(data: SummaryRequest):
             "success": False, 
             "error": str(e)
         }
+
+@app.get("/test-qdrant")
+async def test_qdrant():
+    collections = qdrant.get_collections()
+    return collections.model_dump()
+
+@app.get("/create-collection")
+async def create_collection():
+    qdrant.recreate_collection(
+        collection_name="meetings",
+        vectors_config=VectorParams(
+            size=384,
+            distance=Distance.COSINE,
+        ),
+    )
+
+    return {"success": True}
+
+@app.post("/store-vectors")
+async def store_vectors(data: VectorRequest):
+    try: 
+        chunks = chunk_text(data.transcript)
         
+        store_chunks(
+            data.audioId, 
+            chunks
+        )
+        return {
+            "success": True 
+        }
+    except Exception as e: 
+        return {
+            "success": False, 
+            "error": str(e)
+        }
