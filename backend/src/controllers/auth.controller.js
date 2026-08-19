@@ -59,7 +59,8 @@ async function registerUserController(req, res) {
     },
     token,
   });
-  await emailService.sendRegisterEmail(user.email, user.username);
+  //To readd
+  // await emailService.sendRegisterEmail(user.email, user.username);
 }
 
 /**

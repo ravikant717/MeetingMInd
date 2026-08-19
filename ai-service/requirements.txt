@@ -6,3 +6,5 @@ google-generativeai
 dotenv
 qdrant-client
 sentence-transformers
+langchain-huggingface           
+langchain-google-genai           
