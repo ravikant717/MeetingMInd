@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   UploadCloud,
   FileAudio,
@@ -13,6 +14,7 @@ import {
 import { getAllAudios, uploadAudio } from "@/services/audio.service";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [audios, setAudios] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [file, setFile] = useState<File | null>(null);
@@ -50,12 +52,19 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
+
     const loadData = async () => {
       await fetchAudios();
       setLoading(false);
     };
     loadData();
-  }, []);
+  }, [router]);
 
   if (loading) {
     return (
@@ -70,7 +79,7 @@ export default function DashboardPage() {
       {/* Top bar */}
       <header className="border-b border-white/5 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="h-7 w-7 rounded-md bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+          <div className="h-7 w-7 rounded-md bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
             <Mic className="h-4 w-4" />
           </div>
           <span className="font-semibold">MeetingMind</span>
@@ -160,7 +169,7 @@ export default function DashboardPage() {
               </div>
               {isUploading && (
                 <div className="mt-2 h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full w-2/3 bg-gradient-to-r from-indigo-500 to-purple-500 animate-pulse" />
+                  <div className="h-full w-2/3 bg-linear-to-r from-indigo-500 to-purple-500 animate-pulse" />
                 </div>
               )}
             </div>
