@@ -12,7 +12,7 @@ async function transcribeAudio(fileBuffer, fileName) {
   });
 
   const response = await axios.post(
-    "http://localhost:8000/transcribe",
+    "https://ravikant717-archivex-ai.hf.space/transcribe",
     formData,
     {
       headers: formData.getHeaders(),

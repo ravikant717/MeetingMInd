@@ -6,7 +6,20 @@ from routes.action import router as action_router
 from routes.vector import router as vector_router
 from routes.search import router as search_router
 
+
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
+
+
+app.add_middleware(CORSMiddleware,
+    allow_origins=[
+        "https://meetingmind-2xr9.onrender.com"
+    ], 
+    allow_credentials=True, 
+    allow_methods=["*"], 
+    allow_headers=["*"],)
+
 
 app.include_router(transcribe_router)
 app.include_router(summary_router)
