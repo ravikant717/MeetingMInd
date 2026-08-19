@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 async function generateSummary(transcript) {
-  const response = await axios.post("http://localhost:8000/summary", {
+  const response = await axios.post("https://ravikant717-archivex-ai.hf.space/summary", {
     transcript,
   });
 

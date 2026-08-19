@@ -2,7 +2,7 @@ const axios = require("axios");
 
 async function storeVectors(audioId, transcript) {
   const response = await axios.post(
-    "http://localhost:8000/store-vectors",
+    "https://ravikant717-archivex-ai.hf.space/store-vectors",
     {
       audioId,
       transcript,
