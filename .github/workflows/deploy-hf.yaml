@@ -1,0 +1,35 @@
+name: Deploy AI Folder to Hugging Face
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy ai folder to HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git clone https://oauth2:${HF_TOKEN}@huggingface.co/spaces/ravikant717/archivex-ai space
+
+          find space -mindepth 1 -maxdepth 1 ! -name ".git" -exec rm -rf {} +
+
+          cp -r ai-service/. space/
+
+          cd space
+
+          git config user.email "github-actions@github.com"
+          git config user.name "github-actions"
+
+          git add .
+
+          git diff --cached --quiet || git commit -m "Auto deploy from GitHub"
+
+          git push origin main
